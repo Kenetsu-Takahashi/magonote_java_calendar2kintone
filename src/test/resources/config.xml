@@ -1,4 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config>
+    <!-- 起動オプション output  - - -  data output path　-->
+    <option output="data" mode="dev"/>
+    <!-- develop environment -->
+    <offices>
+        <office name="蒲田事業所" file="kamata"/>
+        <office name="中野事業所" file="nakano"/>
+        <office name="千住事業所" file="senju"/>
+        <office name="赤羽事業所" file="akabane"/>
+        <office name="川崎事業所" file="kawasaki"/>
+        <office name="吉祥寺事業所" file="kichijoji"/>
+        <office name="町田事業所" file="machida"/>
+    </offices>
+    <dev>
+        <!-- kintone environment -->
+        <kintone>
+            <auth domain="ictl-demo" user="takahashi" password="ictl8778"/>
+            <apps>
+                <app name="patient" id="885"/>
+                <app name="operator" id="891"/>
+                <app name="schedule" id="1308"/>
+                <app name="log" id="1377"/>
+            </apps>
+        </kintone>
 
+    </dev>
+    <!-- product environment(magonote) -->
+    <prod>
+        <!-- kintone environment -->
+        <kintone>
+            <auth domain="magonoteclub" user="magonoteclub" password="kenkyoni150"/>
+            <apps>
+                <app name="patient" id="115"/>
+                <app name="operator" id="116"/>
+                <app name="schedule" id="15"/>
+                <app name="log" id="334"/>
+            </apps>
+        </kintone>
+    </prod>
 </config>

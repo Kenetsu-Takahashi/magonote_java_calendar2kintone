@@ -2,11 +2,16 @@ package com.magonote;
 
 import com.ictlab.kintone.Accessor;
 import com.ictlab.log.SystemLogger;
+import com.magonote.environment.Config;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Main {
+    /**
+     * Google Calender連携モジュール名
+     */
+    public final static String MODULE_NAME = "schedule";
 
     /**
      * メイン処理
@@ -22,7 +27,7 @@ public class Main {
         try {
             execute();
         } catch (Exception e) {
-            SystemLogger.getInstance().write(String.format("MA連携中に予期しないエラーが発生しました\n%s", e.getMessage()));
+            SystemLogger.getInstance().write(String.format("Google Calender連携中に予期しないエラーが発生しました\n%s", e.getMessage()));
             System.exit(-1);
         }
 
@@ -33,10 +38,8 @@ public class Main {
      * Config & Accessor初期化
      */
     public static void initialize() {
-        // Config.getInstance().initialize();
-        // Map<String, String> map = Config.getInstance().getAuth();
-        Map<String, String> map = new HashMap<>();
-
+        Config.getInstance().initialize();
+        Map<String, String> map = Config.getInstance().getAuth();
         Accessor.getInstance().initialize(map.get("domain"), map.get("user"), map.get("password"));
     }
 
