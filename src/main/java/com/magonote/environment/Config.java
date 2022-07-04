@@ -126,7 +126,6 @@ public class Config {
         return mode;
     }
 
-
     /**
      * ファイル出力先情報取得
      *
