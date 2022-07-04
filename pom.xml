@@ -5,23 +5,129 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.magonote</groupId>
-    <artifactId>Schedule</artifactId>
+    <artifactId>schedule</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+
+        <!--task内で使用する変数の指定-->
+        <java.version>8</java.version>
+        <compilerArgument>-Xlint:unchecked</compilerArgument>
+        <target.module>schedule</target.module>
+        <target.module.version>1.0-SNAPSHOT</target.module.version>
+        <target.descriptor>jar-with-dependencies</target.descriptor>
+        <target.dir>${project.basedir}/target</target.dir>
+        <output.dir>${env.MAGONOTE_PROGRAM_PATH}/${target.module}/jar</output.dir>
+        <config.dir>${env.MAGONOTE_PROGRAM_PATH}/${target.module}/config</config.dir>
+        <command.dir>${env.MAGONOTE_PROGRAM_PATH}/${target.module}</command.dir>
+        <resource.dir>${project.basedir}/src/test/resources</resource.dir>
+        <config.file>config</config.file>
+        <logconfig.file>log4j2</logconfig.file>
     </properties>
 
-
+    <!-- Maven2 Central Repository Access method change http to https -->
     <repositories>
         <repository>
-            <id>Central</id>
+            <id>central</id>
+            <!-- ここを https:// に変更-->
             <url>https://repo1.maven.org/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <!-- ここを https:// に変更-->
+            <url>https://repo1.maven.org/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencies>
+        <!-- kintone Java SDK ver1.2.0 -->
+        <!-- 以下のコマンドでローカルレポジトリにコピーする
+             mvn install:install-file
+             -Dfile={jarファイルのパス}
+             -DgroupId={groupId}
+             -DartifactId={artifactId}
+             -Dversion={version}
+             -Dpackaging=jar
+             -DgeneratePom=true
+          -->
+        <dependency>
+            <groupId>com.kintone</groupId>
+            <artifactId>kintone-java-client</artifactId>
+            <version>1.2.0</version>
+        </dependency>       <!-- Jackson -->
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.12.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.12.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>2.10.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>2.10.0</version>
+        </dependency>
+        <!-- OpenCSV -->
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.12</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- log4j-core -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.16.0</version>
+        </dependency>
+        <!-- log4j-api -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.16.0</version>
+        </dependency>
+        <!-- JUnit5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.3.2</version>
+            <scope>test</scope>
+        </dependency>
+        <!--　ICTL Common Lib in kintone -->
+        <dependency>
+            <groupId>com.ictlab</groupId>
+            <artifactId>ictl-common-lib</artifactId>
+            <version>2.0-SNAPSHOT</version>
+        </dependency>
+
+        <!--- Google Drive Api etc -->
         <dependency>
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
@@ -62,4 +168,71 @@
         </dependency>
 
     </dependencies>
+
+
+    <!-- Build Configuration -->
+    <build>
+        <plugins>
+            <!-- Create Jar file with Dependencies -->
+            <!-- command: mvn package -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifestEntries>
+                            <Main-Class>com.magonote.Main</Main-Class>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!--
+                実行jarのコピーコマンド
+                mvn antrun:run　
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <target>
+                        <echo message="copy jar file"/>
+                        <copy file="${target.dir}/${target.module}-${target.module.version}-${target.descriptor}.jar"
+                              tofile="${output.dir}/${target.module}.jar"/>
+                        <echo message="copy config file"/>
+                        <copy file="${resource.dir}/${config.file}.xml"
+                              tofile="${config.dir}/${config.file}.xml"/>
+                        <copy file="${resource.dir}/${logconfig.file}.xml"
+                              tofile="${config.dir}/${logconfig.file}.xml"/>
+                    </target>
+                </configuration>
+                <goals>
+                    <goal>run</goal>
+                </goals>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <compilerArgument>${compilerArgument}</compilerArgument>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
