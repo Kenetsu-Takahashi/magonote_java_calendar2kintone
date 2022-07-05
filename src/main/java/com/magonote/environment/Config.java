@@ -153,14 +153,14 @@ public class Config {
     }
 
     /**
-     * 事業所ファイル名取得
+     * アプリ情報取得
      *
-     * @return
+     * @return アプリ情報
      */
-    public Map<String, String> getOffice() {
-        Map<String, String> map = new HashMap<>();
+    public Map<String, Integer> getApps() {
+        Map<String, Integer> map = new HashMap<>();
 
-        final String xpathStr = String.format("//offices/office");
+        final String xpathStr = String.format("//%s/kintone/apps/app", this.mode);
 
         try {
             NodeList nodeList = (NodeList) this.xpath.evaluate(xpathStr, this.document, XPathConstants.NODESET);
@@ -170,8 +170,9 @@ public class Config {
                 NamedNodeMap nodeMap = node.getAttributes();
 
                 Node nameNode = nodeMap.getNamedItem("name");
-                Node fileNode = nodeMap.getNamedItem("file");
-                map.put(fileNode.getNodeValue(), nameNode.getNodeValue());
+                Node idNode = nodeMap.getNamedItem("id");
+
+                map.put(nameNode.getNodeValue(), Integer.valueOf(idNode.getNodeValue()));
             }
 
         } catch (XPathExpressionException e) {

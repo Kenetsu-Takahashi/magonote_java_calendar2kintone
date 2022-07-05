@@ -51,11 +51,56 @@ public class SubFolder {
     /**
      * get folder list in root folder
      *
+     * @param driveService
+     * @param googleFolderIdParent
+     * @return
+     * @throws IOException
+     */
+    public static final List<File> getGoogleSubFolders(Drive driveService, String googleFolderIdParent) throws IOException {
+        String pageToken = null;
+        List<File> list = new ArrayList<>();
+
+        String query;
+        if (googleFolderIdParent == null) {
+            query = " mimeType = 'application/vnd.google-apps.folder' " //
+                    + " and 'root' in parents";
+        } else {
+            query = " mimeType = 'application/vnd.google-apps.folder' " //
+                    + " and '" + googleFolderIdParent + "' in parents";
+        }
+
+        do {
+            FileList result = driveService.files().list().setQ(query).setSpaces("drive") //
+                    // Fields will be assigned values: id, name, createdTime
+                    .setFields("nextPageToken, files(id, name, createdTime)")//
+                    .setPageToken(pageToken).execute();
+            for (File file : result.getFiles()) {
+                list.add(file);
+            }
+            pageToken = result.getNextPageToken();
+        } while (pageToken != null);
+        //
+        return list;
+    }
+
+    /**
+     * get folder list in root folder
+     *
      * @return
      * @throws IOException
      */
     public static final List<File> getGoogleRootFolders() throws IOException {
         return getGoogleSubFolders(null);
+    }
+
+    /**
+     * get folder list in root folder
+     * @param driveService
+     * @return
+     * @throws IOException
+     */
+    public static final List<File> getGoogleRootFolders(Drive driveService) throws IOException {
+        return getGoogleSubFolders(driveService, null);
     }
 
     /**
@@ -68,6 +113,37 @@ public class SubFolder {
     public static final List<File> getFilesInFolder(String folderId) throws IOException {
         Drive driveService = GoogleDriveUtils.getDriveService();
 
+        List<File> files = new ArrayList<>();
+
+        String query;
+
+        if (folderId == null) {
+            query = String.format("mimeType='%s' and 'root' in parents", "text/csv");
+        } else {
+            query = String.format("mimeType='%s' and '%s' in parents", "text/csv", folderId);
+        }
+
+        FileList result = driveService.files().list()
+                .setQ(query)
+                .setSpaces("drive")
+                .setFields("nextPageToken, files(id, name)")
+                .setPageToken(null)
+                .execute();
+
+        files.addAll(result.getFiles());
+
+        return files;
+    }
+
+    /**
+     * get csv file list in folder
+     *
+     * @param driveService
+     * @param folderId
+     * @return
+     * @throws IOException
+     */
+    public static final List<File> getFilesInFolder(Drive driveService, String folderId) throws IOException {
         List<File> files = new ArrayList<>();
 
         String query;

@@ -38,12 +38,10 @@ public class ConfigTest {
     }
 
     @Test
-    void getOffice(){
-        Map<String,String> map = Config.getInstance().getOffice();
+    void getApps() {
+        Map<String, Integer> map = Config.getInstance().getApps();
 
-
-        Assertions.assertEquals(map.size(), 7, "getOffice: map size =  7");
-
+        Assertions.assertEquals((int) map.get("patient"), 885, "Patient Master Id  =  885");
+        Assertions.assertEquals((int) map.get("operator"), 891, "Patient Master Id  =  891");
     }
-
 }
