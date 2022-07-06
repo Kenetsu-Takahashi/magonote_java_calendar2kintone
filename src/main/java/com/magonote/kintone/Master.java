@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * マスタ系のベースクラス
  */
-public class Master  extends com.ictlab.kintone.Base{
+public class Master extends com.ictlab.kintone.Base{
     /**
      * IDとルックアップIDのマップ
      */

@@ -30,10 +30,19 @@ import java.util.Map;
 public class Config {
     private static final Config config = new Config();
 
+    /**
+     * XML Document
+     */
     private Document document;
 
+    /**
+     * XPath
+     */
     private XPath xpath;
 
+    /**
+     * Execute mode
+     */
     private String mode;
 
     /**
@@ -41,11 +50,21 @@ public class Config {
      */
     private final String filePath = String.format("/%s/%s/", Main.MODULE_NAME, "config");
 
+    /**
+     * office map
+     */
     private Map<String, String> officeMap = new HashMap<>();
 
+    /**
+     * Constructor
+     */
     private Config() {
     }
 
+    /**
+     * get singleton instance
+     * @return
+     */
     public static Config getInstance() {
         return Config.config;
     }
