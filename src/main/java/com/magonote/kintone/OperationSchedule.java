@@ -13,16 +13,15 @@ import java.util.Optional;
  * 施術スケジュール
  */
 public class OperationSchedule extends com.ictlab.kintone.Base {
-
     /**
      * 情報クラス
      */
-    public static class Info {
+    public static class Schedule {
         public String startTime;
         public String endTime;
         public String allDay;
-        public String operatorId;
-        public String patientId;
+        public String operatorLookupId;
+        public String patientLookupId;
         public String address;
         public String content;
         public String status;
@@ -31,14 +30,16 @@ public class OperationSchedule extends com.ictlab.kintone.Base {
     /**
      * 登録用フィールド
      */
-    private String[] fields = {"開始日時",
+    private String[] fields = {
+            "開始日時",
             "終了日時",
             "患者様",
             "施術者",
             "施術場所住所",
             "終日",
             "施術内容",
-            "状況"};
+            "状況"
+    };
 
     /**
      * Constructor
@@ -51,13 +52,13 @@ public class OperationSchedule extends com.ictlab.kintone.Base {
     /**
      * スケジュール登録
      *
-     * @param infoList 情報リスト
+     * @param schedules 情報リスト
      * @return true/false
      */
-    public boolean write(List<Info> infoList) {
+    public boolean write(List<Schedule> schedules) {
         List<Record> records = new ArrayList<>();
 
-        infoList.stream().forEach(x -> {
+        schedules.stream().forEach(x -> {
             Record record = new Record();
 
             for (String field : this.fields) {
@@ -73,11 +74,11 @@ public class OperationSchedule extends com.ictlab.kintone.Base {
                     }
                     break;
                     case "患者様": {
-                         record.putField(field, new SingleLineTextFieldValue(x.patientId));
+                        record.putField(field, new SingleLineTextFieldValue(x.patientLookupId));
                     }
                     break;
                     case "施術者": {
-                        record.putField(field, new SingleLineTextFieldValue(x.operatorId));
+                        record.putField(field, new SingleLineTextFieldValue(x.operatorLookupId));
                     }
                     break;
                     case "施術場所住所": {

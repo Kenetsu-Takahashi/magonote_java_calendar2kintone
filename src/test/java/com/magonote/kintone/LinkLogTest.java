@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
  * LinkLog Test
  */
 public class LinkLogTest {
-    private LinkLog log = new LinkLog();
+    private LinkLog linkLog = new LinkLog();
 
     @BeforeAll
     static void setup() {
@@ -19,7 +19,7 @@ public class LinkLogTest {
     @Test
     void initialize() {
         if(false) {
-            boolean flag = log.initialize();
+            boolean flag = linkLog.initialize();
 
             Assertions.assertTrue(flag, "LinkLog initialize success");
         }
@@ -27,21 +27,21 @@ public class LinkLogTest {
 
     @Test
     void write() {
-        boolean flag = log.initialize();
+        boolean flag = linkLog.initialize();
 
         Assertions.assertTrue(flag, "LinkLog initialize success");
 
-        LinkLog.Info info = new LinkLog.Info();
+        LinkLog.Log log = new LinkLog.Log();
 
-        info.office="吉祥寺事業所";
-        info.count = 12345;
+        log.office="吉祥寺事業所";
+        log.count = 12345;
 
-        log.write(info);
+        linkLog.write(log);
 
-        info.office="中野事業所";
-        info.count = 4444;
+        log.office="中野事業所";
+        log.count = 4444;
 
-        log.write(info);
+        linkLog.write(log);
     }
 
 }

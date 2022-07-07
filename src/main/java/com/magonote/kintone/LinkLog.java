@@ -25,7 +25,7 @@ public class LinkLog extends Base {
     /**
      * 情報保持クラス
      */
-    public static class Info {
+    public static class Log {
         public String office = "";
         public Integer count = 0;
     }
@@ -101,10 +101,10 @@ public class LinkLog extends Base {
     /**
      * 履歴登録（更新）
      *
-     * @param info
-     * @return
+     * @param log Log info
+     * @return true/false
      */
-    public boolean write(Info info) {
+    public boolean write(Log log) {
         Record targetRecord = this.getTargetRecord();
 
         if (targetRecord == null) {
@@ -118,7 +118,7 @@ public class LinkLog extends Base {
         Record record = new Record();
         record.putField(this.endField, new DateTimeFieldValue(dateTime));
 
-        List<TableRow> rows = this.setTableValue(targetRecord, info);
+        List<TableRow> rows = this.setTableValue(targetRecord, log);
 
         SubtableFieldValue value = new SubtableFieldValue(rows);
 
@@ -162,11 +162,11 @@ public class LinkLog extends Base {
     /**
      * 履歴データ生成
      *
-     * @param record
-     * @param info
-     * @return
+     * @param record Kintone Record
+     * @param log Log info
+     * @return List<TableRow>
      */
-    private List<TableRow> setTableValue(Record record, Info info) {
+    private List<TableRow> setTableValue(Record record, Log log) {
         List<TableRow> currentRows = record.getSubtableFieldValue(this.historyTableField);
 
         List<TableRow> rows = new ArrayList<>(currentRows);
@@ -175,11 +175,11 @@ public class LinkLog extends Base {
 
         FieldValue value;
 
-        value = new DropDownFieldValue(info.office);
+        value = new DropDownFieldValue(log.office);
 
         newRow.putField(this.officeField, value);
 
-        value = new NumberFieldValue(info.count);
+        value = new NumberFieldValue(log.count);
 
         newRow.putField(this.countField, value);
 
