@@ -195,9 +195,34 @@ public class Config {
             }
 
         } catch (XPathExpressionException e) {
-            SystemLogger.getInstance().write("Config:getAuth:" + e.getMessage());
+            SystemLogger.getInstance().write("Config:getApps:" + e.getMessage());
         }
 
         return map;
+    }
+
+    /**
+     * データフォルダID取得
+     * @return データフォルダID
+     */
+    public String getDataFolderId(){
+        final String xpathStr = String.format("//%s/folder", this.mode);
+
+        String folderId = "";
+
+        try {
+            Node node = (Node) this.xpath.evaluate(xpathStr, this.document, XPathConstants.NODE);
+
+            NamedNodeMap nodeMap = node.getAttributes();
+
+            Node idNode = nodeMap.getNamedItem("id");
+
+            folderId = idNode.getNodeValue();
+
+        } catch (XPathExpressionException e) {
+            SystemLogger.getInstance().write("Config:getDataFolderId:" + e.getMessage());
+        }
+
+        return  folderId;
     }
 }

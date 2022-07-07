@@ -44,4 +44,13 @@ public class ConfigTest {
         Assertions.assertEquals((int) map.get("patient"), 885, "Patient Master Id  =  885");
         Assertions.assertEquals((int) map.get("operator"), 891, "Patient Master Id  =  891");
     }
+
+    @Test
+    void getDataFolderId(){
+        String folderId = Config.getInstance().getDataFolderId();
+
+        final String targetFolderId = "1reNVgRl1XWLPgyOJSkGnY_UdN8O6UOxB";
+
+        Assertions.assertEquals(folderId, targetFolderId, "getDataFolderId FolderId  =  1reNVgRl1XWLPgyOJSkGnY_UdN8O6UOxB");
+    }
 }

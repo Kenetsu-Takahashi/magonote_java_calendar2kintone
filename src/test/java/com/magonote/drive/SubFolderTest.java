@@ -59,7 +59,6 @@ public class SubFolderTest {
                     }
                 }
 
-
                 final String outputFile = String.format("%s/%s/data/%s", System.getenv("MAGONOTE_PROGRAM_PATH"), Main.MODULE_NAME, targetFile.getName());
 
                 boolean flag = com.magonote.drive.Helper.downloadFile(service, targetFile.getId(), outputFile);

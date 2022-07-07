@@ -14,7 +14,7 @@
                 <app name="log" id="1377"/>
             </apps>
         </kintone>
-
+        <folder id="1reNVgRl1XWLPgyOJSkGnY_UdN8O6UOxB"/>
     </dev>
     <!-- product environment(magonote) -->
     <prod>
@@ -28,5 +28,6 @@
                 <app name="log" id="334"/>
             </apps>
         </kintone>
+        <folder id="1LoAMM_A3mgP3FFG6IxhkIHUrPwFTW-D5"/>
     </prod>
 </config>
