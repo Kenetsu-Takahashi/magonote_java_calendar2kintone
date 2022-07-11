@@ -4,10 +4,17 @@ import com.ictlab.kintone.Accessor;
 import com.ictlab.log.SystemLogger;
 import com.magonote.environment.Config;
 
-import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Main class
+ */
 public class Main {
+    /**
+     * Google Drive API Downloadが有効か否か
+     */
+    public static boolean validDownload = false;
+
     /**
      * Google Calender連携モジュール名
      */

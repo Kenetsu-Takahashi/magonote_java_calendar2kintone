@@ -54,7 +54,8 @@ public class Handler implements AutoCloseable {
             "カレンダー連携開始",
             "カレンダー連携終了",
             "データファイルのダウンロードに失敗しました",
-            "スケジュール登録に失敗しました"
+            "スケジュール登録に失敗しました",
+            "カレンダー連携ログ登録に失敗しました"
     };
 
     /**
@@ -98,14 +99,19 @@ public class Handler implements AutoCloseable {
     public boolean execute() {
         SystemLogger.getInstance().write(this.messages[0], SystemLogger.Level.INFO);
 
-        this.deleteFile();
+        if (Main.validDownload) {
+            this.deleteFile();
 
-        if (!this.download()) {
-            SystemLogger.getInstance().write(this.messages[2], SystemLogger.Level.INFO);
-            return false;
+            if (!this.download()) {
+                SystemLogger.getInstance().write(this.messages[2], SystemLogger.Level.INFO);
+                return false;
+            }
         }
 
-        this.linkLog.initialize();
+        if (this.linkLog.initialize()) {
+            SystemLogger.getInstance().write(this.messages[4]);
+            return false;
+        }
 
         this.getSchedule();
 
@@ -196,24 +202,9 @@ public class Handler implements AutoCloseable {
             final java.io.File outputFolder = new java.io.File(this.outputFolder);
 
             Files.walk(outputFolder.toPath())
-                    .sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
                     .filter(x -> x.getName().contains(this.targetExtension))
-                    .forEach(x -> {
-                        final ScheduleFile scheduleFile = new ScheduleFile(x.getPath(), this.operatorIdMap, this.patientIdMap);
-
-                        final String operatorId = scheduleFile.getFirstOperator();
-
-                        final String office = this.operatorMaster.getOffice(operatorId);
-
-                        if (!this.scheduleMap.containsKey(office)) {
-                            this.scheduleMap.put(office, new ArrayList<>());
-                        }
-
-                        final List<OperationSchedule.Schedule> schedules = this.scheduleMap.get(office);
-
-                        schedules.addAll(scheduleFile.getScheduleList());
-                    });
+                    .forEach(this::addSchedule);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -241,5 +232,26 @@ public class Handler implements AutoCloseable {
             log.count = schedules.size();
             this.linkLog.write(log);
         }
+    }
+
+    /**
+     * スケジュール追加
+     *
+     * @param file データファイル
+     */
+    private void addSchedule(java.io.File file) {
+        final ScheduleFile scheduleFile = new ScheduleFile(file.getPath(), this.operatorIdMap, this.patientIdMap);
+
+        final String operatorId = scheduleFile.getFirstOperator();
+
+        final String office = this.operatorMaster.getOffice(operatorId);
+
+        if (!this.scheduleMap.containsKey(office)) {
+            this.scheduleMap.put(office, new ArrayList<>());
+        }
+
+        final List<OperationSchedule.Schedule> schedules = this.scheduleMap.get(office);
+
+        schedules.addAll(scheduleFile.getScheduleList());
     }
 }
