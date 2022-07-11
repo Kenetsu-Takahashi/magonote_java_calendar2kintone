@@ -3,7 +3,6 @@ package com.magonote.kintone;
 import com.kintone.client.model.record.*;
 import com.magonote.environment.Config;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,20 +55,20 @@ public class OperationSchedule extends com.ictlab.kintone.Base {
      * @return true/false
      */
     public boolean write(List<Schedule> schedules) {
-        List<Record> records = new ArrayList<>();
+        final List<Record> records = new ArrayList<>();
 
         schedules.stream().forEach(x -> {
-            Record record = new Record();
+            final Record record = new Record();
 
             for (String field : this.fields) {
                 switch (field) {
                     case "開始日時": {
-                        ZonedDateTime dateTime = Helper.getZonedDateTime(x.startTime);
+                        final ZonedDateTime dateTime = Helper.getZonedDateTime(x.startTime);
                         record.putField(field, new DateTimeFieldValue(dateTime));
                     }
                     break;
                     case "終了日時": {
-                        ZonedDateTime dateTime = Helper.getZonedDateTime(x.endTime);
+                        final ZonedDateTime dateTime = Helper.getZonedDateTime(x.endTime);
                         record.putField(field, new DateTimeFieldValue(dateTime));
                     }
                     break;
@@ -86,7 +85,13 @@ public class OperationSchedule extends com.ictlab.kintone.Base {
                     }
                     break;
                     case "終日": {
-                        record.putField(field, new CheckBoxFieldValue(x.allDay));
+                        final List<String> values = new ArrayList<>();
+
+                        if (!x.allDay.isEmpty()) {
+                            values.add(x.allDay);
+                        }
+
+                        record.putField(field, new CheckBoxFieldValue(values));
                     }
                     break;
                     case "施術内容": {
