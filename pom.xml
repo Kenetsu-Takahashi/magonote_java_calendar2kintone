@@ -167,12 +167,25 @@
             <artifactId>google-api-client-jackson2</artifactId>
             <version>1.20.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.maven.surefire</groupId>
+            <artifactId>surefire-testng</artifactId>
+            <version>2.14.1</version>
+        </dependency>
     </dependencies>
 
 
     <!-- Build Configuration -->
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.14.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <!-- Create Jar file with Dependencies -->
             <!-- command: mvn package -->
@@ -233,7 +246,7 @@
                     <compilerArgument>${compilerArgument}</compilerArgument>
                 </configuration>
             </plugin>
-        </plugins>
+         </plugins>
     </build>
 
 </project>
