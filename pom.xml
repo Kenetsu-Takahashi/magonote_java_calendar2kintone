@@ -232,7 +232,7 @@
                         <copy file="${resource.dir}/${logconfig.file}.xml"
                               tofile="${config.dir}/${logconfig.file}.xml"/>
                         <copy file="${resource.dir}/${command.file}.cmd"
-                              tofile="${config.dir}/${command.file}.cmd"/>
+                              tofile="${command.dir}/${command.file}.cmd"/>
                     </target>
                 </configuration>
                 <goals>
