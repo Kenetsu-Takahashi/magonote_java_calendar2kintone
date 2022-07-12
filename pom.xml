@@ -25,6 +25,7 @@
         <resource.dir>${project.basedir}/src/test/resources</resource.dir>
         <config.file>config</config.file>
         <logconfig.file>log4j2</logconfig.file>
+        <command.file>schedule</command.file>
     </properties>
 
     <!-- Maven2 Central Repository Access method change http to https -->
@@ -230,6 +231,8 @@
                               tofile="${config.dir}/${config.file}.xml"/>
                         <copy file="${resource.dir}/${logconfig.file}.xml"
                               tofile="${config.dir}/${logconfig.file}.xml"/>
+                        <copy file="${resource.dir}/${command.file}.cmd"
+                              tofile="${config.dir}/${command.file}.cmd"/>
                     </target>
                 </configuration>
                 <goals>
