@@ -78,22 +78,24 @@ public class LinkLog extends Base {
      * @return
      */
     public boolean initialize() {
-        List<Record> records = new ArrayList<>();
+        if (!this.getTodayRecord()) {
+            List<Record> records = new ArrayList<>();
 
-        ZonedDateTime dateTime = ZonedDateTime.now(ZoneId.of("UTC"));
+            ZonedDateTime dateTime = ZonedDateTime.now(ZoneId.of("UTC"));
 
-        Record record = new Record();
-        record.putField(this.startField, new DateTimeFieldValue(dateTime));
+            Record record = new Record();
+            record.putField(this.startField, new DateTimeFieldValue(dateTime));
 
-        records.add(record);
+            records.add(record);
 
-        Optional<List<Long>> ids = this.insert(records);
+            Optional<List<Long>> ids = this.insert(records);
 
-        ids.ifPresent(x -> {
-            if (!x.isEmpty()) {
-                this.recordId = x.get(0);
-            }
-        });
+            ids.ifPresent(x -> {
+                if (!x.isEmpty()) {
+                    this.recordId = x.get(0);
+                }
+            });
+        }
 
         return this.recordId != 0;
     }
@@ -152,7 +154,8 @@ public class LinkLog extends Base {
 
         Optional<List<Record>> records = this.select(query);
 
-        if (!records.isPresent()) {
+        if (!records.isPresent()
+                || records.get().isEmpty()) {
             return null;
         }
 
@@ -163,7 +166,7 @@ public class LinkLog extends Base {
      * 履歴データ生成
      *
      * @param record Kintone Record
-     * @param log Log info
+     * @param log    Log info
      * @return List<TableRow>
      */
     private List<TableRow> setTableValue(Record record, Log log) {
@@ -186,5 +189,24 @@ public class LinkLog extends Base {
         rows.add(newRow);
 
         return rows;
+    }
+
+    /**
+     * 当日の対象レコード取得
+     */
+    private boolean getTodayRecord() {
+        final String query = "開始日時=TODAY()";
+        final List<String> fields = new ArrayList<>();
+        fields.add("$id");
+
+        Optional<List<Record>> records = this.select(query, fields);
+
+        records.ifPresent(x -> {
+            if (!x.isEmpty()) {
+                this.recordId = x.get(0).getId();
+            }
+        });
+
+        return this.recordId != 0;
     }
 }

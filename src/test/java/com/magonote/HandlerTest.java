@@ -15,7 +15,7 @@ public class HandlerTest {
 
     @Test
     void execute() {
-        if(false) {
+        if(true) {
             Handler handler = new Handler();
 
             boolean flag = handler.execute();
