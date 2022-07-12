@@ -7,6 +7,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 施術スケジュール
@@ -55,9 +56,7 @@ public class OperationSchedule extends com.ictlab.kintone.Base {
      * @return true/false
      */
     public boolean write(List<Schedule> schedules) {
-        final List<Record> records = new ArrayList<>();
-
-        schedules.stream().forEach(x -> {
+        final List<Record> records = schedules.stream().map(x -> {
             final Record record = new Record();
 
             for (String field : this.fields) {
@@ -107,8 +106,8 @@ public class OperationSchedule extends com.ictlab.kintone.Base {
                 }
             }
 
-            records.add(record);
-        });
+            return record;
+        }).collect(Collectors.toList());
 
         Optional<List<Long>> ids = this.insert(records);
 

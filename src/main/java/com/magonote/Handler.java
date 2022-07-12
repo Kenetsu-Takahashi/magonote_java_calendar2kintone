@@ -5,6 +5,7 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Revision;
 import com.ictlab.kintone.Accessor;
 import com.ictlab.log.SystemLogger;
+import com.kintone.client.model.record.Record;
 import com.magonote.csv.ScheduleFile;
 import com.magonote.drive.GoogleDriveUtils;
 import com.magonote.drive.SubFolder;
@@ -30,22 +31,22 @@ public class Handler implements AutoCloseable {
     /**
      * 施術者マスタ
      */
-    private OperatorMaster operatorMaster = new OperatorMaster();
+    private final OperatorMaster operatorMaster = new OperatorMaster();
 
     /**
      * 患者様マスタ
      */
-    private PatientMaster patientMaster = new PatientMaster();
+    private final PatientMaster patientMaster = new PatientMaster();
 
     /**
      * 施術者IDマップ
      */
-    private Map<String, String> operatorIdMap;
+    private final Map<String, String> operatorIdMap;
 
     /**
      * 患者様IDマップ
      */
-    private Map<String, String> patientIdMap;
+    private final Map<String, String> patientIdMap;
 
     /**
      * メッセージ
@@ -76,12 +77,17 @@ public class Handler implements AutoCloseable {
     /**
      * 事業所別のスケジュールデータ
      */
-    private Map<String, List<OperationSchedule.Schedule>> scheduleMap = new HashMap<>();
+    private final Map<String, List<OperationSchedule.Schedule>> scheduleMap = new HashMap<>();
 
     /**
      * 連携ログアプリ
      */
-    private LinkLog linkLog = new LinkLog();
+    private final LinkLog linkLog = new LinkLog();
+
+    /**
+     * 施術スケジュールアプリ
+     */
+    private final OperationSchedule operationSchedule = new OperationSchedule();
 
     /**
      * Constructor
@@ -108,10 +114,12 @@ public class Handler implements AutoCloseable {
             }
         }
 
-        if (this.linkLog.initialize()) {
+        if (!this.linkLog.initialize()) {
             SystemLogger.getInstance().write(this.messages[4]);
             return false;
         }
+
+        this.delete();
 
         this.getSchedule();
 
@@ -127,6 +135,24 @@ public class Handler implements AutoCloseable {
      */
     public void close() {
         Accessor.getInstance().close();
+    }
+
+    /**
+     * レコード削除
+     */
+    private void delete() {
+        final List<String> fields =new ArrayList<>();
+        fields.add("$id");
+
+        Optional<List<Record>> records = this.operationSchedule.select("", fields);
+
+        records.ifPresent(list -> {
+            final List<Long> ids = list.stream().map(x -> x.getId()).collect(Collectors.toList());
+
+            if (!ids.isEmpty()) {
+                this.operationSchedule.delete(ids);
+            }
+        });
     }
 
     /**
@@ -214,14 +240,12 @@ public class Handler implements AutoCloseable {
      * 施術スケジュール登録
      */
     private void register() {
-        final OperationSchedule operationSchedule = new OperationSchedule();
-
         final LinkLog.Log log = new LinkLog.Log();
 
         for (Map.Entry<String, List<OperationSchedule.Schedule>> entry : this.scheduleMap.entrySet()) {
             final List<OperationSchedule.Schedule> schedules = entry.getValue();
 
-            boolean flag = operationSchedule.write(schedules);
+            boolean flag = this.operationSchedule.write(schedules);
 
             if (!flag) {
                 SystemLogger.getInstance().write(this.messages[3]);
