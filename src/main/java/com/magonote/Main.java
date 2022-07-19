@@ -13,7 +13,7 @@ public class Main {
     /**
      * Google Drive API Downloadが有効か否か
      */
-    public static boolean validDownload = false;
+    public static boolean validDownload = true;
 
     /**
      * Google Calender連携モジュール名

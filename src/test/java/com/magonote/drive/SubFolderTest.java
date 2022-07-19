@@ -42,14 +42,21 @@ public class SubFolderTest {
     }
 
     @Test
-    void getFilesInFolder() throws IOException {
+    void getFilesInFolder() {
         if (true) {
             File targetFile = null;
 
             try {
-                final String folderId = "1reNVgRl1XWLPgyOJSkGnY_UdN8O6UOxB";
 
-                List<File> files = SubFolder.getFilesInFolder(service,folderId);
+                // dev
+                String folderId = "1reNVgRl1XWLPgyOJSkGnY_UdN8O6UOxB";
+
+                // prod
+                if (true) {
+                    folderId = "1LoAMM_A3mgP3FFG6IxhkIHUrPwFTW-D5";
+                }
+
+                List<File> files = SubFolder.getFilesInFolder(service, folderId);
 
                 for (File file : files) {
                     System.out.println(file.getName() + ": " + file.getId());

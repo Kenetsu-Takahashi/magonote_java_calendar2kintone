@@ -141,7 +141,7 @@ public class Handler implements AutoCloseable {
      * レコード削除
      */
     private void delete() {
-        final List<String> fields =new ArrayList<>();
+        final List<String> fields = new ArrayList<>();
         fields.add("$id");
 
         Optional<List<Record>> records = this.operationSchedule.select("", fields);
