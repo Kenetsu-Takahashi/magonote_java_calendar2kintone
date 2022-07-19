@@ -105,10 +105,13 @@ public class GoogleDriveUtils {
         if (_driveService != null) {
             return _driveService;
         }
+
         Credential credential = getCredentials();
-        //
+
+        // drive dervice instance
         _driveService = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential) //
                 .setApplicationName(APPLICATION_NAME).build();
+
         return _driveService;
     }
 
