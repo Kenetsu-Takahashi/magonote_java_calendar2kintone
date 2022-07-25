@@ -106,11 +106,19 @@ public class Handler implements AutoCloseable {
         SystemLogger.getInstance().write(this.messages[0], SystemLogger.Level.INFO);
 
         if (Main.validDownload) {
-            this.deleteFile();
+            // downloadエラー対策でリトライする
+            if (true) {
+                if (!this.downloadWithRetry()) {
+                    SystemLogger.getInstance().write(this.messages[2], SystemLogger.Level.INFO);
+                    return false;
+                }
+            } else {
+                this.deleteFile();
 
-            if (!this.download()) {
-                SystemLogger.getInstance().write(this.messages[2], SystemLogger.Level.INFO);
-                return false;
+                if (!this.download()) {
+                    SystemLogger.getInstance().write(this.messages[2], SystemLogger.Level.INFO);
+                    return false;
+                }
             }
         }
 
@@ -277,5 +285,27 @@ public class Handler implements AutoCloseable {
         final List<OperationSchedule.Schedule> schedules = this.scheduleMap.get(office);
 
         schedules.addAll(scheduleFile.getScheduleList());
+    }
+
+    /**
+     * ダウンロード（リトライ）
+     *
+     * @return
+     */
+    private boolean downloadWithRetry() {
+        int retryCount = 5;
+
+        boolean flag = false;
+
+        for (int i = 0; i < retryCount; i++) {
+            this.deleteFile();
+
+            if (this.download()) {
+                flag = true;
+                break;
+            }
+        }
+
+        return flag;
     }
 }
